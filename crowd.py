@@ -55,8 +55,8 @@ def get_crowd_percentage(image):
                 progress += 1
             else:
                 break
-        total_x_pixels = length - 7
-        x_pixels_until_gray_bar = progress - 7
+        total_x_pixels = length - bar_offset
+        x_pixels_until_gray_bar = progress - bar_offset
         print(
             f"[!] {datetime.datetime.now()} :: Crowd meter percentage: {x_pixels_until_gray_bar}/{total_x_pixels} ({100*x_pixels_until_gray_bar / total_x_pixels}%)"
         )
