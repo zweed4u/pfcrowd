@@ -45,6 +45,9 @@ def get_crowd_percentage(image):
         height = len(output)
         length = len(output[int(height / 2)])
         progress = 0
+        bar_offset = (
+            7  # screenshot webelement has 7 pixels on the left before bars starts
+        )
         # loop through the horizontal pixels on the midline
         # increment until the first not black pixel is found.
         for x_pixel_bgr in output[int(height / 2)]:
@@ -52,10 +55,12 @@ def get_crowd_percentage(image):
                 progress += 1
             else:
                 break
+        total_x_pixels = length - 7
+        x_pixels_until_gray_bar = progress - 7
         print(
-            f"[!] {datetime.datetime.now()} :: Crowd meter percentage: {progress}/{length} ({100*progress / length}%)"
+            f"[!] {datetime.datetime.now()} :: Crowd meter percentage: {x_pixels_until_gray_bar}/{total_x_pixels} ({100*x_pixels_until_gray_bar / total_x_pixels}%)"
         )
-        return progress / length
+        return x_pixels_until_gray_bar / total_x_pixels
 
 
 print(f"[*] {datetime.datetime.now()} :: Parsing cli options")
