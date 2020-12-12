@@ -56,11 +56,8 @@ def get_crowd_percentage(image):
             else:
                 break
         total_x_pixels = length - bar_offset
-        x_pixels_until_gray_bar = progress - bar_offset
-        print(
-            f"[!] {datetime.datetime.now()} :: Crowd meter percentage: {x_pixels_until_gray_bar}/{total_x_pixels} ({100*x_pixels_until_gray_bar / total_x_pixels}%)"
-        )
-        return x_pixels_until_gray_bar / total_x_pixels
+        x_pixels_until_gray_bar = max(progress - bar_offset, 0)
+        return x_pixels_until_gray_bar, total_x_pixels
 
 
 print(f"[*] {datetime.datetime.now()} :: Parsing cli options")
@@ -108,9 +105,13 @@ while running:
                 "club-capacity-meter"
             )
             capacity_meter_div.screenshot("screen_shot.png")
-            crowd_percentage = get_crowd_percentage(image_path)
+            x_pixels_until_gray_bar, total_x_pixels = get_crowd_percentage(image_path)
+            crowd_percentage = x_pixels_until_gray_bar / total_x_pixels
+            print(
+                f"[!] {datetime.datetime.now()} :: Current crowd percentage: {x_pixels_until_gray_bar}/{total_x_pixels} ({100*crowd_percentage}%)"
+            )
             slack_requester.send_message(
-                f"<!channel> *{datetime.datetime.now()} UTC* - Current Crowd Percentage: {round(crowd_percentage*100,2)}%"
+                f"<!channel> *{datetime.datetime.now()} UTC* - Current Crowd Percentage: {round(crowd_percentage*100,2)}% - pixels: ({x_pixels_until_gray_bar}/{total_x_pixels})"
             )
         except Exception as exc:
             print(

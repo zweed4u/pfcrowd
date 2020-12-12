@@ -10,6 +10,8 @@ requests = "^2.25.0"
 selenium = "^3.141.0"
 black = "^20.8b1"
 "keyrings.alt" = "^4.0.1"
+numpy = "^1.19.4"
+opencv-python = "^4.4.0"
 
 [tool.poetry.dev-dependencies]
 
