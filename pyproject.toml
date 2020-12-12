@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "crowd"
+version = "0.1.0"
+description = ""
+authors = ["Zachary Weeden <zdw7287@rit.edu>"]
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+selenium = "^3.141.0"
+argparse = "^1.4.0"
+requests = "^2.25.0"
+numpy = "^1.19.4"
+opencv-python = "^4.4.0"
+black = "^20.8b1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
