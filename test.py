@@ -13,14 +13,6 @@ import cv2
 from pytz import timezone
 
 
-class SlackRequester:
-    def __init__(self, url: Optional[str]):
-        self.url = url
-
-    def send_message(self, message: str):
-        slack_response = requests.request("POST", self.url, json={"text": message})
-
-
 def get_crowd_percentage(image):
     image = cv2.imread(image)
     # cv2.imshow('image',image)
@@ -73,16 +65,6 @@ args = parser.parse_args()
 poll = args.poll
 image_path = args.image
 
-print(f"[*] {datetime.datetime.now(eastern)} :: Reading config")
-current_directory = os.path.dirname(os.path.realpath(__file__))
-with open(f"{current_directory}/config.json") as json_file:
-    config_data = json.load(json_file)
-slack_webhook_url = config_data.get("webhook_url")
-slack_requester = SlackRequester(slack_webhook_url)
-
-slack_requester.send_message(
-    f"<!channel> *{datetime.datetime.now(eastern)} Eastern* - initializing pf crowd bot"
-)
 
 print(f"[*] {datetime.datetime.now(eastern)} :: Setting up webdriver options")
 options = Options()
@@ -116,23 +98,14 @@ while running:
             print(
                 f"[!] {datetime.datetime.now(eastern)} :: Current Crowd Percentage: ~{round(crowd_percentage*100,2)}% - Filled Bar to Total Pixels: {x_pixels_until_gray_bar}/{total_x_pixels} - Bars: [{int(round(crowd_percentage,2)*total_bars)}] out of {total_bars}"
             )
-            slack_requester.send_message(
-                f"<!channel> *{datetime.datetime.now(eastern)} Eastern* - Current Crowd Percentage: ~{round(crowd_percentage*100,2)}% - Filled Bar to Total Pixels: {x_pixels_until_gray_bar}/{total_x_pixels} - Bars: [{int(round(crowd_percentage,2)*total_bars)}] out of {total_bars}"
-            )
         except Exception as exc:
             print(
                 f"[!] {datetime.datetime.now(eastern)} :: Error in finding element, screenshotting, or getting percentage: {exc}"
-            )
-            slack_requester.send_message(
-                f"<!channel> *{datetime.datetime.now(eastern)} Eastern* - Exception was raised during runtime - pf crowd bot exiting"
             )
         time.sleep(poll)
     except (Exception, KeyboardInterrupt) as exc:
         print(
             f"[*] {datetime.datetime.now(eastern)} :: SIGINT caught - closing browser"
-        )
-        slack_requester.send_message(
-            f"<!channel> *{datetime.datetime.now(eastern)} Eastern* - Exception was raised during runtime - pf crowd bot exiting"
         )
         running = False
         continue

@@ -12,6 +12,7 @@ black = "^20.8b1"
 "keyrings.alt" = "^4.0.1"
 numpy = "^1.19.4"
 opencv-python = "^4.4.0"
+pytz = "^2020.4"
 
 [tool.poetry.dev-dependencies]
 
