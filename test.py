@@ -20,7 +20,7 @@ def get_crowd_percentage(image):
     boundaries = [
         # G   B    R     G   B    R
         # >=  >=   >=    <=  <=   <=
-        ([190, 190, 190], [255, 255, 255])
+        ([190, 190, 190], [254, 254, 254])  # white is 255 - in between
     ]
 
     # loop over the boundaries
@@ -38,9 +38,7 @@ def get_crowd_percentage(image):
         height = len(output)
         length = len(output[int(height / 2)])
         progress = 0
-        bar_offset = (
-            7  # screenshot webelement has 7 pixels on the left before bars starts
-        )
+        bar_offset = 1  # EDIT THIS WAS 7 BUT SCREENSHOT OF ELEMENT WITH NEW SITE IS 1- screenshot webelement has 7 pixels on the left before bars starts
         # loop through the horizontal pixels on the midline
         # increment until the first not black pixel is found.
         for x_pixel_bgr in output[int(height / 2)]:
@@ -84,15 +82,43 @@ url = "https://www.planetfitness.com/gyms/danvers-ma"
 running = True
 while running:
     try:
+        day = datetime.date.today().strftime("%A")
         print(f"[*] {datetime.datetime.now(eastern)} :: Visiting...")
         driver.get(url)
+        time.sleep(1)
         try:
+            print(
+                f"[*] {datetime.datetime.now(eastern)} :: Finding current day ({day}), clicking and screenshot whole div..."
+            )
+            day_btn = driver.find_element_by_id(day)
+            day_btn.click()
+            complete_crowd_div = driver.find_element_by_id("CrowdMeter")
+            complete_crowd_div.screenshot("complete_crowd.png")
+        except Exception as exc:
+            print(
+                f"[!] {datetime.datetime.now(eastern)} :: Error in finding specific day element and clicking, screenshotting the crowd div: {exc}"
+            )
+        try:
+            # lol no opencv needed just grab number of masked bars
+            crowd_bar_mask = driver.find_element_by_id("mask")
+            cap_bars = crowd_bar_mask.find_elements_by_tag_name("path")
+            print(
+                f"[!] {datetime.datetime.now(eastern)} :: Bars found by counting masked completed-item elements: {len(cap_bars)}/20"
+            )
+
+            crowd_meter = driver.find_element_by_xpath(
+                '//*[@id="CrowdMeter"]/div[1]/div[2]'
+            )
+            crowd_meter.screenshot("screen_shot.png")
+
             # complete_capacity_div = driver.find_element_by_class_name("club-capacity")
             # complete_capacity_div.screenshot('screen_shot.png')
-            capacity_meter_div = driver.find_element_by_class_name(
-                "club-capacity-meter"
-            )
-            capacity_meter_div.screenshot("screen_shot.png")
+
+            # Website redesign ~7PM EST December 16th, 2020
+            # capacity_meter_div = driver.find_element_by_class_name(
+            #     "club-capacity-meter"
+            # )
+            # capacity_meter_div.screenshot("screen_shot.png")
             x_pixels_until_gray_bar, total_x_pixels = get_crowd_percentage(image_path)
             crowd_percentage = x_pixels_until_gray_bar / total_x_pixels
             print(
