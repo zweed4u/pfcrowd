@@ -82,7 +82,7 @@ url = "https://www.planetfitness.com/gyms/danvers-ma"
 running = True
 while running:
     try:
-        day = datetime.date.today().strftime("%A")
+        day = datetime.datetime.now(eastern).strftime("%A")
         print(f"[*] {datetime.datetime.now(eastern)} :: Visiting...")
         driver.get(url)
         time.sleep(1)
